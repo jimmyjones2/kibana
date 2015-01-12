@@ -25,14 +25,10 @@
           </td>
 
           <td>
-            <i bo-if="!mapping[field] && !showArrayInObjectsWarning(doc, field)"
+            <i bo-if="!mapping[field]"
               tooltip-placement="top"
               tooltip="No cached mapping for this field. Refresh your mapping from the Settings > Indices page"
               class="fa fa-warning text-color-warning ng-scope doc-viewer-no-mapping"></i>
-            <i bo-if="showArrayInObjectsWarning(doc, field)"
-              tooltip-placement="top"
-              tooltip="Objects in arrays are not well supported."
-              class="fa fa-warning text-color-warning ng-scope doc-viewer-object-array"></i>
             <span class="doc-viewer-value" ng-bind-html="(formatted[field] || hit[field]) | highlight : hit.highlight[field] | trustAsHtml"></span>
           </td>
         </tr>

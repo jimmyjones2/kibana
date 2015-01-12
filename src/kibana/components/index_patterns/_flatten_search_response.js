@@ -7,16 +7,36 @@ define(function (require) {
     var self = this;
     (function flattenObj(obj) {
       _.keys(obj).forEach(function (key) {
-        stack.push(key);
+        if (!_.isArray(obj))
+          stack.push(key);
         var flattenKey = stack.join('.');
 
-        if ((self.fields.byName[flattenKey] || _.isArray(obj[key]) || !_.isObject(obj[key]))) {
-          flatObj[flattenKey] = obj[key];
+        if ((self.fields.byName[flattenKey] || !_.isObject(obj[key]))) {
+          if( !flatObj[flattenKey] ) {
+            flatObj[flattenKey] = obj[key];
+          } else if( _.isArray(flatObj[flattenKey])) {
+            if( _.isArray(obj[key]) ) {
+              flatObj[flattenKey] = flatObj[flattenKey].concat(obj[key]);
+            } else {
+              flatObj[flattenKey].push(obj[key]);
+            }
+          } else {
+            flatObj[flattenKey] = [ flatObj[flattenKey], obj[key] ];
+          }
+        } else if (_.isArray(obj[key])) {
+          if (_.isObject(obj[key][0]) || _.isArray(obj[key][0])) {
+            flattenObj(obj[key]);
+          } else {
+            // Not sure when this is reached!
+            // FIXME: modify like above
+            flatObj[flattenKey] = obj[key];
+          }
         } else if (_.isObject(obj[key])) {
           flattenObj(obj[key]);
         }
 
-        stack.pop();
+        if (!_.isArray(obj))
+          stack.pop();
       });
     }(nestedObj));
     return flatObj;

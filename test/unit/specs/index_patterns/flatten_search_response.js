@@ -52,5 +52,7 @@ define(function (require) {
       var obj = indexPattern.flattenSearchResponse(fixture);
       expect(obj).to.have.property('tags', fixture['tags']);
     });
+
+    // TODO: Add more tests here
   });
 });
