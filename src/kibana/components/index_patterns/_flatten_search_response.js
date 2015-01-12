@@ -4,19 +4,33 @@ define(function (require) {
     var key; // original key
     var stack = []; // track key stack
     var flatObj = {};
+    var inArray = false;
     var self = this;
     (function flattenObj(obj) {
       _.keys(obj).forEach(function (key) {
-        stack.push(key);
+        if (!_.isArray(obj))
+          stack.push(key);
         var flattenKey = stack.join('.');
 
-        if ((self.fields.byName[flattenKey] || _.isArray(obj[key]) || !_.isObject(obj[key]))) {
-          flatObj[flattenKey] = obj[key];
+        if ((self.fields.byName[flattenKey] || !_.isObject(obj[key]))) {
+          if (inArray) {
+            if (!flatObj[flattenKey])
+              flatObj[flattenKey] = [];
+            flatObj[flattenKey] = flatObj[flattenKey].concat(obj[key]);
+          } else {
+            flatObj[flattenKey] = obj[key];
+          }
+        } else if (_.isArray(obj[key])) {
+          var prev = inArray;
+          inArray = true;
+          flattenObj(obj[key]);
+          inArray = prev;
         } else if (_.isObject(obj[key])) {
           flattenObj(obj[key]);
         }
 
-        stack.pop();
+        if (!_.isArray(obj))
+          stack.pop();
       });
     }(nestedObj));
     return flatObj;

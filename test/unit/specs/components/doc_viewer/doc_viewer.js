@@ -108,12 +108,6 @@ define(function (require) {
           expect(cells.find('.doc-viewer-no-mapping').length).to.be(1);
           expect(cells.find('.doc-viewer-object-array').length).to.be(0);
         });
-
-        it('displays a warning about objects in arrays', function () {
-          var cells = $elem.find('td[title="objectArray"]').siblings();
-          expect(cells.find('.doc-viewer-no-mapping').length).to.be(0);
-          expect(cells.find('.doc-viewer-object-array').length).to.be(1);
-        });
       });
 
     });
