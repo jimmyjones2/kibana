@@ -3,6 +3,8 @@ define(function (require) {
     var _ = require('lodash');
     var getSeries;
 
+    var agg = { fieldFormatter: _.constant(_.identity) };
+
     beforeEach(module('kibana'));
     beforeEach(inject(function (Private) {
       getSeries = Private(require('components/agg_response/point_series/_get_series'));
@@ -98,7 +100,9 @@ define(function (require) {
       var rows = [
         ['0', 3],
         ['1', 3],
+        ['1', 'NaN'],
         ['0', 3],
+        ['0', 'NaN'],
         ['1', 3],
         ['0', 3],
         ['1', 3]
@@ -107,7 +111,7 @@ define(function (require) {
       var chart = {
         aspects: {
           x: { i: -1 },
-          series: { i: 0 },
+          series: { i: 0, agg: agg },
           y: { i: 1, col: { title: '0' } }
         }
       };
@@ -149,7 +153,7 @@ define(function (require) {
       var chart = {
         aspects: {
           x: { i: -1 },
-          series: { i: 0 },
+          series: { i: 0, agg: agg },
           y: [
             { i: 1, col: { title: '0' }, agg: { id: 1 } },
             { i: 2, col: { title: '1' }, agg: { id: 2 } }
@@ -199,7 +203,7 @@ define(function (require) {
       var chart = {
         aspects: {
           x: { i: -1 },
-          series: { i: 0 },
+          series: { i: 0, agg: agg },
           y: [
             { i: 1, col: { title: '0' }, agg: { id: 1 } },
             { i: 2, col: { title: '1' }, agg: { id: 2 } }

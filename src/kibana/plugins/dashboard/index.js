@@ -1,6 +1,7 @@
 define(function (require) {
   var _ = require('lodash');
   var $ = require('jquery');
+  var angular = require('angular');
   var ConfigTemplate = require('utils/config_template');
   var onlyDisabled = require('components/filter_bar/lib/onlyDisabled');
 
@@ -82,10 +83,6 @@ define(function (require) {
           pickVis: require('text!plugins/dashboard/partials/pick_visualization.html')
         });
 
-        $scope.openSave = _.partial($scope.configTemplate.toggle, 'save');
-        $scope.openShare = _.partial($scope.configTemplate.toggle, 'share');
-        $scope.openLoad = _.partial($scope.configTemplate.toggle, 'load');
-        $scope.openAdd = _.partial($scope.configTemplate.toggle, 'pickVis');
         $scope.refresh = _.bindKey(courier, 'fetch');
 
         timefilter.enabled = true;
@@ -137,10 +134,11 @@ define(function (require) {
         $scope.save = function () {
           $state.title = dash.id = dash.title;
           $state.save();
-          dash.panelsJSON = JSON.stringify($state.panels);
+          dash.panelsJSON = angular.toJson($state.panels);
 
           dash.save()
           .then(function (id) {
+            $scope.configTemplate.close('save');
             if (id) {
               notify.info('Saved Dashboard as "' + dash.title + '"');
               if (dash.id !== $routeParams.id) {
