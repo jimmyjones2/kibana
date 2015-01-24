@@ -28,6 +28,7 @@ define(function (require) {
       bytes: 10039103,
       '@timestamp': (new Date()).toString(),
       tags: [{ text: 'foo' }, { text: 'bar' }],
+      objInArray: [[{ abc: [ 1, 2 ] }, { def: 3 }], [{ abc: [ 2, 3 ] }, { def: 4 }], [{ ghi: 5 }, { jkl: [ { mno: 6 } ] } ]],
       noMapping: true
     };
 
@@ -50,7 +51,27 @@ define(function (require) {
 
     it('should preserve objects in arrays', function () {
       var obj = indexPattern.flattenSearchResponse(fixture);
-      expect(obj).to.have.property('tags', fixture['tags']);
+      expect(obj).to.have.property('tags.text', [ 'foo', 'bar' ]);
+    });
+
+    it('should merge two arrays with same path into array', function () {
+      var obj = indexPattern.flattenSearchResponse(fixture);
+      expect(obj).to.have.property('objInArray.abc', [ 1, 2, 2, 3 ]);
+    });
+
+    it('should merge two elements with same path into array', function () {
+      var obj = indexPattern.flattenSearchResponse(fixture);
+      expect(obj).to.have.property('objInArray.def', [ 3, 4 ]);
+    });
+
+    it('should put values in an array when underneath an object within an array', function () {
+      var obj = indexPattern.flattenSearchResponse(fixture);
+      expect(obj).to.have.property('objInArray.ghi', [ 5 ]);
+    });
+
+    it('should supported object arrays in object arrays', function () {
+      var obj = indexPattern.flattenSearchResponse(fixture);
+      expect(obj).to.have.property('objInArray.jkl.mno', [ 6 ]);
     });
 
     // TODO: Add more tests here

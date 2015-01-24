@@ -4,6 +4,7 @@ define(function (require) {
     var key; // original key
     var stack = []; // track key stack
     var flatObj = {};
+    var inArray = false;
     var self = this;
     (function flattenObj(obj) {
       _.keys(obj).forEach(function (key) {
@@ -12,25 +13,18 @@ define(function (require) {
         var flattenKey = stack.join('.');
 
         if ((self.fields.byName[flattenKey] || !_.isObject(obj[key]))) {
-          if( !flatObj[flattenKey] ) {
-            flatObj[flattenKey] = obj[key];
-          } else if( _.isArray(flatObj[flattenKey])) {
-            if( _.isArray(obj[key]) ) {
-              flatObj[flattenKey] = flatObj[flattenKey].concat(obj[key]);
-            } else {
-              flatObj[flattenKey].push(obj[key]);
-            }
+          if (inArray) {
+            if (!flatObj[flattenKey])
+              flatObj[flattenKey] = [];
+            flatObj[flattenKey] = flatObj[flattenKey].concat(obj[key]);
           } else {
-            flatObj[flattenKey] = [ flatObj[flattenKey], obj[key] ];
+            flatObj[flattenKey] = obj[key];
           }
         } else if (_.isArray(obj[key])) {
-          if (_.isObject(obj[key][0]) || _.isArray(obj[key][0])) {
-            flattenObj(obj[key]);
-          } else {
-            // Not sure when this is reached!
-            // FIXME: modify like above
-            flatObj[flattenKey] = obj[key];
-          }
+          var prev = inArray;
+          inArray = true;
+          flattenObj(obj[key]);
+          inArray = prev;
         } else if (_.isObject(obj[key])) {
           flattenObj(obj[key]);
         }
