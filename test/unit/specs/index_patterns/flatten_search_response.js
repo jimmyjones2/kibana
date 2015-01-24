@@ -28,7 +28,7 @@ define(function (require) {
       bytes: 10039103,
       '@timestamp': (new Date()).toString(),
       tags: [{ text: 'foo' }, { text: 'bar' }],
-      objInArray: [[{ abc: [ 1, 2 ] }, { def: 3 }], [{ abc: [ 2, 3 ] }, { def: 4 }], [{ ghi: 5 }]],
+      objInArray: [[{ abc: [ 1, 2 ] }, { def: 3 }], [{ abc: [ 2, 3 ] }, { def: 4 }], [{ ghi: 5 }, { jkl: [ { mno: 6 } ] } ]],
       noMapping: true
     };
 
@@ -67,6 +67,11 @@ define(function (require) {
     it('should put values in an array when underneath an object within an array', function () {
       var obj = indexPattern.flattenSearchResponse(fixture);
       expect(obj).to.have.property('objInArray.ghi', [ 5 ]);
+    });
+
+    it('should supported object arrays in object arrays', function () {
+      var obj = indexPattern.flattenSearchResponse(fixture);
+      expect(obj).to.have.property('objInArray.jkl.mno', [ 6 ]);
     });
 
     // TODO: Add more tests here
