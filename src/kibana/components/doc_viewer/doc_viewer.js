@@ -18,11 +18,24 @@ define(function (require) {
         indexPattern: '=',
         filter: '=?',
       },
+      controller: function ($scope, $http, config) {
+        var restUrl = config.get('restView:url');
+        if( restUrl ) {
+          $scope.restView = 'Loading...';
+          $http.post(restUrl, $scope.hit).
+            success(function(data, status, headers, config) {
+              $scope.restView = data;
+            }).
+            error(function(data, status, headers, config) {
+              $scope.restView = 'Error rendering document with URL specified in restView:url advanced setting';
+            });
+        }
+      },
       link: function ($scope, $el, attr) {
         // If a field isn't in the mapping, use this
         var defaultFormat = formats.defaultByType.string;
 
-        $scope.mode = 'table';
+        $scope.mode = $scope.restView ? 'view' : 'table';
         $scope.mapping = $scope.indexPattern.fields.byName;
 
         $scope.flattened = $scope.indexPattern.flattenHit($scope.hit);

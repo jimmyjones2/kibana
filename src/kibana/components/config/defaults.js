@@ -78,6 +78,10 @@ define(function (require) {
       value: false,
       description: 'Shorten long fields, for example, instead of foo.bar.baz, show f.b.baz',
     },
+   'restView:url': {
+      value: null,
+      description: 'External REST URL used to render documents for viewing',
+    },
     'truncate:maxHeight': {
       value: 115,
       description: 'The maximum height that a cell in a table should occupy. Set to 0 to disable truncation.'

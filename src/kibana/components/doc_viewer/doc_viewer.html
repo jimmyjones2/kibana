@@ -1,10 +1,13 @@
 <div class="doc-viewer">
   <ul class="nav nav-tabs">
+    <li ng-class="{active: mode == 'view'}" ng-show="restView"><a ng-click="mode='view'">View</a></li>
     <li ng-class="{active: mode == 'table'}"><a ng-click="mode='table'">Table</a></li>
     <li ng-class="{active: mode == 'json'}"><a ng-click="mode='json'">JSON</a></li>
   </ul>
 
   <div class="content">
+    <div ng-show="mode == 'view'" ng-bind-html="restView | trustAsHtml"></div>
+
     <table class="table table-condensed" ng-show="mode == 'table'" bindonce>
       <tbody>
         <tr ng-repeat="field in fields" bindonce>
